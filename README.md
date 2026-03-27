@@ -243,6 +243,6 @@ Please keep the zero-dependency philosophy — no npm packages, no bundlers, van
 
 <div align="center">
 
-Made with ☕ and way too many new tabs open
+
 
 </div>
