@@ -45,14 +45,14 @@ Every time you open a new tab you get:
 │   ║  G  │  Search with Google or enter address...         ║     │
 │   ╚═══════════════════════════════════════════════════════╝     │
 │                                                                 │
-│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐  │
-│  │  Home Assistant │ │    Servers      │ │    Network      │  │
-│  │                 │ │                 │ │                 │  │
-│  │ [Up Light ] ON  │ │ ● Server 1  ext │ │ IP   1.2.3.4    │  │
-│  │ [Table    ] OFF │ │ ● NAS      lan │ │ ISP  Comcast    │  │
-│  │ [Sub PC   ] ON  │ │ ◉ Server 2  ext │ │ Loc  NY, US     │  │
-│  │ [Printer  ] OFF │ │ ● Home srv lan │ │ Org  AS12345    │  │
-│  └─────────────────┘ └─────────────────┘ └─────────────────┘  │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐    │
+│  │  Home Assistant │ │    Servers      │ │    Network      │    │
+│  │                 │ │                 │ │                 │    │
+│  │ [Up Light ] ON  │ │ ● Server 1  ext │ │ IP   1.2.3.4    │    │
+│  │ [Table    ] OFF │ │ ● NAS      lan  │ │ ISP  Comcast    │    │
+│  │ [Sub PC   ] ON  │ │ ◉ Server 2 ext │ │ Loc  NY, US     │    │
+│  │ [Printer  ] OFF │ │ ● Home srv lan  │ │ Org  AS12345    │    │
+│  └─────────────────┘ └─────────────────┘ └─────────────────┘    │
 │                                                            ⚙️   │
 └─────────────────────────────────────────────────────────────────┘
 ```
