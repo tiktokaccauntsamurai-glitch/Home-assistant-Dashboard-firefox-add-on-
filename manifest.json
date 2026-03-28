@@ -1,38 +1,18 @@
 {
   "manifest_version": 2,
-  "name": "Custom New Tab — Dashboard",
-  "version": "2.1",
-  "description": "Custom new tab page with Home Assistant controls, server monitoring, and network info widget.",
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "home-assist-universal-tab@extension",
-      "strict_min_version": "140.0",
-      "data_collection_permissions": {
-        "required": ["none"]
-      }
-    },
-    "gecko_android": {
-      "strict_min_version": "142.0"
-    }
-  },
-  "icons": {
-    "48": "icons/icon-48.svg",
-    "96": "icons/icon-96.svg"
-  },
+  "name": "Custom New Tab",
+  "version": "1.1",
+  "description": "Custom homepage with Home Assistant, server monitoring and network info",
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
   },
   "permissions": [
     "<all_urls>",
-    "storage",
     "tabs"
   ],
-  "background": {
-    "scripts": ["background.js"]
-  },
   "content_security_policy": "script-src 'self'; object-src 'self'; connect-src *; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;"
 }

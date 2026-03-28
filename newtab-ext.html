@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Tab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Doto:ROND@0;1&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #2b2a33;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      color: #fbfbfe;
+      padding: 32px 20px;
+    }
+
+    .top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .firefox-title {
+      font-family: 'Doto', monospace;
+      font-size: clamp(36px, 6vw, 96px);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      background: linear-gradient(
+        90deg,
+        #FFE000 0%, #FF8C00 8%, #FF2200 18%, #CC0055 28%,
+        #7700CC 38%, #FF5500 48%, #FFE000 50%,
+        #FF8C00 58%, #FF2200 68%, #CC0055 78%,
+        #7700CC 88%, #FF5500 96%, #FFE000 100%
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: flow 4s linear infinite;
+    }
+    @keyframes flow {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 100% 0%; }
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #42414d;
+      border-radius: 12px;
+      padding: 13px 18px;
+      width: 100%;
+      max-width: 900px;
+      cursor: text;
+      border: 1.5px solid transparent;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+    }
+    .search-bar:focus-within {
+      border-color: #00b3f4;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+    }
+    .search-g {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #4285F4;
+      flex-shrink: 0;
+      line-height: 1;
+      user-select: none;
+    }
+    .search-bar input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: #fbfbfe;
+      font-size: 0.95rem;
+      font-family: 'Montserrat', sans-serif;
+      caret-color: #fbfbfe;
+    }
+    .search-bar input::placeholder { color: #b1b1c0; }
+
+    .widgets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 900px;
+      margin-top: 28px;
+      align-items: stretch;
+    }
+
+    .widget {
+      background: #38373f;
+      border-radius: 12px;
+      padding: 18px 16px;
+      border: 1px solid #47464f;
+    }
+
+    .widget-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #9090a0;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .smarthome-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sh-btn {
+      background: #2b2a33;
+      border: 1.5px solid #47464f;
+      border-radius: 10px;
+      padding: 12px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      transition: border-color 0.3s, background 0.3s;
+      position: relative;
+      overflow: hidden;
+      min-height: 64px;
+    }
+    .sh-btn:hover { background: #33323c; }
+    .sh-btn.on  { border-color: #2ac48a; background: #1e3830; }
+    .sh-btn.off { border-color: #47464f; background: #2b2a33; }
+    .sh-btn.loading { opacity: 0.6; pointer-events: none; }
+
+    .sh-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #cfcfd8;
+      font-weight: 500;
+      line-height: 1.3;
+      text-align: center;
+      width: 100%;
+    }
+    .sh-state-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      color: #9090a0;
+      letter-spacing: 0.04em;
+    }
+    .sh-btn.on .sh-state-label { color: #2ac48a; }
+
+    .server-list { display: flex; flex-direction: column; gap: 10px; }
+    .server-item { display: flex; align-items: center; gap: 10px; }
+
+    .server-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #55535f;
+      flex-shrink: 0;
+      transition: background 0.4s;
+    }
+    .server-dot.online   { background: #2ac48a; box-shadow: 0 0 6px #2ac48a66; }
+    .server-dot.offline  { background: #ff4f5e; box-shadow: 0 0 6px #ff4f5e66; }
+    .server-dot.checking { background: #ffb347; animation: pulse 1s infinite; }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.4; }
+    }
+
+    .server-info { flex: 1; min-width: 0; }
+    .server-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      color: #cfcfd8;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .server-latency {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      color: #9090a0;
+      margin-top: 1px;
+    }
+    .server-tag {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.62rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+    }
+    .server-tag.ext { background: #2a2a40; color: #8888cc; }
+    .server-tag.loc { background: #1e3830; color: #2ac48a; }
+
+    .servers-updated {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      color: #55535f;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .ip-block { display: flex; flex-direction: column; gap: 10px; }
+    .ip-row   { display: flex; flex-direction: column; gap: 2px; }
+
+    .ip-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      color: #9090a0;
+      letter-spacing: 0.05em;
+    }
+    .ip-value {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      color: #fbfbfe;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .ip-value.skeleton {
+      background: #47464f;
+      border-radius: 4px;
+      color: transparent;
+      animation: shimmer 1.2s infinite;
+      min-width: 120px;
+      min-height: 1em;
+    }
+    @keyframes shimmer {
+      0%,100% { opacity: 0.5; }
+      50%      { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top">
+  <div class="firefox-title">FIREFOX</div>
+  <div class="search-bar" id="search-bar">
+    <span class="search-g">G</span>
+    <input id="q" type="text" placeholder="Search with Google or enter address" autocomplete="off" autofocus/>
+  </div>
+</div>
+
+<div class="widgets">
+  <div class="widget">
+    <div class="widget-title">Home Assistant</div>
+    <div class="smarthome-grid" id="sh-grid"></div>
+  </div>
+
+  <div class="widget">
+    <div class="widget-title">Servers</div>
+    <div class="server-list" id="srv-list"></div>
+    <div class="servers-updated" id="srv-updated">&mdash;</div>
+  </div>
+
+  <div class="widget">
+    <div class="widget-title">Network</div>
+    <div class="ip-block">
+      <div class="ip-row">
+        <span class="ip-label">External IP</span>
+        <span class="ip-value skeleton" id="ip-addr">000.000.000.000</span>
+      </div>
+      <div class="ip-row">
+        <span class="ip-label">ISP</span>
+        <span class="ip-value skeleton" id="ip-isp">Loading...</span>
+      </div>
+      <div class="ip-row">
+        <span class="ip-label">Location</span>
+        <span class="ip-value skeleton" id="ip-loc">Loading...</span>
+      </div>
+      <div class="ip-row">
+        <span class="ip-label">Organisation</span>
+        <span class="ip-value skeleton" id="ip-org">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="newtab.js"></script>
+</body>
+</html>

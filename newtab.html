@@ -20,6 +20,7 @@
       padding: 32px 20px;
     }
 
+    /* ── TOP ── */
     .top {
       display: flex;
       flex-direction: column;
@@ -46,10 +47,11 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: flow 4s linear infinite;
+
     }
     @keyframes flow {
-      0%   { background-position: 0% 0; }
-      100% { background-position: 100% 0; }
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 100% 0%; }
     }
 
     .search-bar {
@@ -63,12 +65,12 @@
       max-width: 900px;
       cursor: text;
       border: 1.5px solid transparent;
-      transition: border-color .15s, box-shadow .15s;
-      box-shadow: 0 4px 18px rgba(0,0,0,.45);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.45);
     }
     .search-bar:focus-within {
       border-color: #00b3f4;
-      box-shadow: 0 4px 24px rgba(0,0,0,.55);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.55);
     }
     .search-g {
       font-family: 'Montserrat', sans-serif;
@@ -85,12 +87,13 @@
       border: none;
       outline: none;
       color: #fbfbfe;
-      font-size: .95rem;
+      font-size: 0.95rem;
       font-family: 'Montserrat', sans-serif;
       caret-color: #fbfbfe;
     }
     .search-bar input::placeholder { color: #b1b1c0; }
 
+    /* ── WIDGETS ── */
     .widgets {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -110,20 +113,21 @@
 
     .widget-title {
       font-family: 'Montserrat', sans-serif;
-      font-size: .78rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      letter-spacing: .06em;
+      letter-spacing: 0.06em;
       color: #9090a0;
       margin-bottom: 14px;
       text-align: center;
     }
 
-    /* Smart Home */
+    /* ── SMART HOME ── */
     .smarthome-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
+
     .sh-btn {
       background: #2b2a33;
       border: 1.5px solid #47464f;
@@ -136,7 +140,7 @@
       justify-content: center;
       gap: 6px;
       text-align: center;
-      transition: border-color .3s, background .3s;
+      transition: border-color 0.3s, background 0.3s;
       position: relative;
       overflow: hidden;
       min-height: 64px;
@@ -144,10 +148,11 @@
     .sh-btn:hover { background: #33323c; }
     .sh-btn.on  { border-color: #2ac48a; background: #1e3830; }
     .sh-btn.off { border-color: #47464f; background: #2b2a33; }
-    .sh-btn.loading { opacity: .6; pointer-events: none; }
+    .sh-btn.loading { opacity: 0.6; pointer-events: none; }
+
     .sh-name {
       font-family: 'Montserrat', sans-serif;
-      font-size: .78rem;
+      font-size: 0.78rem;
       color: #cfcfd8;
       font-weight: 500;
       line-height: 1.3;
@@ -156,33 +161,36 @@
     }
     .sh-state-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: .68rem;
+      font-size: 0.68rem;
       color: #9090a0;
-      letter-spacing: .04em;
+      letter-spacing: 0.04em;
     }
     .sh-btn.on .sh-state-label { color: #2ac48a; }
 
-    /* Servers */
+    /* ── SERVERS ── */
     .server-list { display: flex; flex-direction: column; gap: 10px; }
     .server-item { display: flex; align-items: center; gap: 10px; }
+
     .server-dot {
       width: 9px; height: 9px;
       border-radius: 50%;
       background: #55535f;
       flex-shrink: 0;
-      transition: background .4s;
+      transition: background 0.4s;
     }
     .server-dot.online   { background: #2ac48a; box-shadow: 0 0 6px #2ac48a66; }
     .server-dot.offline  { background: #ff4f5e; box-shadow: 0 0 6px #ff4f5e66; }
     .server-dot.checking { background: #ffb347; animation: pulse 1s infinite; }
+
     @keyframes pulse {
       0%,100% { opacity: 1; }
-      50%     { opacity: .4; }
+      50%      { opacity: 0.4; }
     }
+
     .server-info { flex: 1; min-width: 0; }
     .server-name {
       font-family: 'Montserrat', sans-serif;
-      font-size: .8rem;
+      font-size: 0.8rem;
       color: #cfcfd8;
       font-weight: 500;
       white-space: nowrap;
@@ -191,41 +199,43 @@
     }
     .server-latency {
       font-family: 'Montserrat', sans-serif;
-      font-size: .68rem;
+      font-size: 0.68rem;
       color: #9090a0;
       margin-top: 1px;
     }
     .server-tag {
       font-family: 'Montserrat', sans-serif;
-      font-size: .62rem;
+      font-size: 0.62rem;
       padding: 2px 6px;
       border-radius: 4px;
       font-weight: 600;
-      letter-spacing: .06em;
+      letter-spacing: 0.06em;
       flex-shrink: 0;
     }
     .server-tag.ext { background: #2a2a40; color: #8888cc; }
     .server-tag.loc { background: #1e3830; color: #2ac48a; }
+
     .servers-updated {
       font-family: 'Montserrat', sans-serif;
-      font-size: .65rem;
+      font-size: 0.65rem;
       color: #55535f;
       margin-top: 10px;
       text-align: right;
     }
 
-    /* Network */
+    /* ── NETWORK ── */
     .ip-block { display: flex; flex-direction: column; gap: 10px; }
     .ip-row   { display: flex; flex-direction: column; gap: 2px; }
+
     .ip-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: .65rem;
+      font-size: 0.65rem;
       color: #9090a0;
-      letter-spacing: .05em;
+      letter-spacing: 0.05em;
     }
     .ip-value {
       font-family: 'Montserrat', sans-serif;
-      font-size: .88rem;
+      font-size: 0.88rem;
       color: #fbfbfe;
       font-weight: 500;
       font-variant-numeric: tabular-nums;
@@ -239,87 +249,289 @@
       min-height: 1em;
     }
     @keyframes shimmer {
-      0%,100% { opacity: .5; }
-      50%     { opacity: 1; }
+      0%,100% { opacity: 0.5; }
+      50%      { opacity: 1; }
     }
-
-    /* Empty state */
-    .empty-msg {
-      text-align: center;
-      color: #55535f;
-      font-size: .78rem;
-      padding: 16px 0;
-    }
-    .empty-msg a {
-      color: #00b3f4;
-      text-decoration: none;
-    }
-    .empty-msg a:hover { text-decoration: underline; }
-
-    /* Settings gear */
-    .btn-settings {
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      background: #38373f;
-      border: 1px solid #47464f;
-      border-radius: 10px;
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background .15s, border-color .15s;
-      color: #9090a0;
-    }
-    .btn-settings:hover {
-      background: #42414d;
-      border-color: #55535f;
-      color: #fbfbfe;
-    }
-    .btn-settings svg { width: 18px; height: 18px; }
   </style>
 </head>
 <body>
 
+<!-- ════════ CONFIG — EDIT THIS SECTION ════════ -->
+<script>
+const CONFIG = {
+  ha: {
+    url:   'http://homeassistant.local:8123',
+    token: 'YOUR_TOKEN_HERE',
+    devices: [
+      { id: 'switch.device_1', name: 'Up Light'    },
+      { id: 'switch.device_2', name: 'Table Light' },
+      { id: 'switch.device_3', name: 'Sub PC'      },
+      { id: 'switch.device_4', name: 'Printer'     },
+    ]
+  },
+  servers: [
+    { name: 'Server 1',    url: 'https://example.com',       type: 'ext' },
+    { name: 'Server 2',    url: 'https://example2.com',      type: 'ext' },
+    { name: 'NAS',         url: 'http://192.168.1.100:8080', type: 'loc' },
+    { name: 'Home server', url: 'http://192.168.1.101:3000', type: 'loc' },
+  ],
+};
+</script>
+<!-- ════════════════════════════════════════════ -->
+
 <div class="top">
   <div class="firefox-title">FIREFOX</div>
-  <div class="search-bar" id="search-bar">
+
+  <div class="search-bar" onclick="document.getElementById('q').focus()">
     <span class="search-g">G</span>
     <input id="q" type="text" placeholder="Search with Google or enter address" autocomplete="off" autofocus/>
   </div>
 </div>
 
 <div class="widgets">
+
   <div class="widget">
     <div class="widget-title">Home Assistant</div>
     <div class="smarthome-grid" id="sh-grid"></div>
   </div>
+
   <div class="widget">
     <div class="widget-title">Servers</div>
     <div class="server-list" id="srv-list"></div>
-    <div class="servers-updated" id="srv-updated">&mdash;</div>
+    <div class="servers-updated" id="srv-updated">—</div>
   </div>
+
   <div class="widget">
     <div class="widget-title">Network</div>
     <div class="ip-block">
-      <div class="ip-row"><span class="ip-label">External IP</span><span class="ip-value skeleton" id="ip-addr">000.000.000.000</span></div>
-      <div class="ip-row"><span class="ip-label">ISP</span><span class="ip-value skeleton" id="ip-isp">Loading...</span></div>
-      <div class="ip-row"><span class="ip-label">Location</span><span class="ip-value skeleton" id="ip-loc">Loading...</span></div>
-      <div class="ip-row"><span class="ip-label">Organisation</span><span class="ip-value skeleton" id="ip-org">Loading...</span></div>
+      <div class="ip-row">
+        <span class="ip-label">External IP</span>
+        <span class="ip-value skeleton" id="ip-addr">000.000.000.000</span>
+      </div>
+      <div class="ip-row">
+        <span class="ip-label">ISP</span>
+        <span class="ip-value skeleton" id="ip-isp">Loading...</span>
+      </div>
+      <div class="ip-row">
+        <span class="ip-label">Location</span>
+        <span class="ip-value skeleton" id="ip-loc">Loading...</span>
+      </div>
+      <div class="ip-row">
+        <span class="ip-label">Organisation</span>
+        <span class="ip-value skeleton" id="ip-org">Loading...</span>
+      </div>
     </div>
   </div>
+
 </div>
 
-<button class="btn-settings" id="btn-settings" title="Settings">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-  </svg>
-</button>
+<script>
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-<script src="crypto.js"></script>
-<script src="newtab.js"></script>
+// ── SEARCH ──────────────────────────────────────────────────────
+document.getElementById('q').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim()) {
+    const q = this.value.trim();
+    const isUrl = /^https?:\/\//i.test(q) || /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/|$)/.test(q);
+    window.location.href = isUrl
+      ? (q.startsWith('http') ? q : 'https://' + q)
+      : 'https://www.google.com/search?q=' + encodeURIComponent(q);
+  }
+});
+
+// ── HOME ASSISTANT ───────────────────────────────────────────────
+// Polling: devices staggered evenly over 60s each cycle
+// After toggle: cascade checks at 3s → 8s → 18s → 40s
+const HA = CONFIG.ha;
+const haHeaders = { 'Authorization': 'Bearer ' + HA.token, 'Content-Type': 'application/json' };
+const shState = {};
+
+async function haFetchState(entityId) {
+  try {
+    const r = await fetch(`${HA.url}/api/states/${entityId}`, {
+      headers: haHeaders, signal: AbortSignal.timeout(5000)
+    });
+    if (!r.ok) return null;
+    return (await r.json()).state;
+  } catch (e) {
+    if (e instanceof TypeError && e.message.includes('NetworkError')) {
+      console.warn('[HA] CORS/Network error — serve page via HTTP, not file://');
+    }
+    return null;
+  }
+}
+
+async function haToggle(entityId, currentState) {
+  const service = currentState === 'on' ? 'turn_off' : 'turn_on';
+  const domain = entityId.split('.')[0];
+  try {
+    await fetch(`${HA.url}/api/services/${domain}/${service}`, {
+      method: 'POST', headers: haHeaders,
+      body: JSON.stringify({ entity_id: entityId }),
+      signal: AbortSignal.timeout(5000)
+    });
+  } catch {}
+}
+
+function renderShBtn(dev, idx) {
+  const state = shState[dev.id];
+  const btn = document.getElementById('sh-btn-' + idx);
+  if (!btn) return;
+  btn.className = 'sh-btn ' + (state === 'on' ? 'on' : state === 'off' ? 'off' : '');
+  btn.querySelector('.sh-state-label').textContent =
+    state === 'on' ? 'on' : state === 'off' ? 'off' : '';
+}
+
+function buildSmartHome() {
+  const grid = document.getElementById('sh-grid');
+  HA.devices.forEach((dev, idx) => {
+    shState[dev.id] = null;
+    const btn = document.createElement('button');
+    btn.className = 'sh-btn';
+    btn.id = 'sh-btn-' + idx;
+    btn.innerHTML = `
+      <span class="sh-name">${dev.name || ''}</span>
+      <span class="sh-state-label"></span>
+    `;
+    btn.addEventListener('click', async () => {
+      const cur = shState[dev.id];
+      if (cur === null) return;
+      shState[dev.id] = cur === 'on' ? 'off' : 'on';
+      renderShBtn(dev, idx);
+      btn.classList.add('loading');
+      await haToggle(dev.id, cur);
+      btn.classList.remove('loading');
+      for (const delay of [3000, 8000, 18000, 40000]) {
+        await sleep(delay);
+        const s = await haFetchState(dev.id);
+        if (s !== null) { shState[dev.id] = s; renderShBtn(dev, idx); }
+      }
+    });
+    grid.appendChild(btn);
+  });
+}
+
+async function shPollingLoop() {
+  const count = HA.devices.length;
+  const step = Math.floor(60000 / count);
+  // First pass: all at once for quick initial display
+  HA.devices.forEach((dev, i) => {
+    haFetchState(dev.id).then(s => {
+      if (s !== null) { shState[dev.id] = s; renderShBtn(dev, i); }
+    });
+  });
+  // Wait one full cycle then stagger
+  await sleep(60000);
+  while (true) {
+    for (let i = 0; i < count; i++) {
+      if (i > 0) await sleep(step);
+      const s = await haFetchState(HA.devices[i].id);
+      if (s !== null) { shState[HA.devices[i].id] = s; renderShBtn(HA.devices[i], i); }
+    }
+    await sleep(step);
+  }
+}
+
+// ── SERVERS ──────────────────────────────────────────────────────
+// Check every 5 min, staggered 400ms between each server
+// Timeouts: 7s external, 3s local
+function buildServers() {
+  const list = document.getElementById('srv-list');
+  CONFIG.servers.forEach((srv, idx) => {
+    const el = document.createElement('div');
+    el.className = 'server-item';
+    el.id = 'srv-' + idx;
+    el.innerHTML = `
+      <span class="server-dot checking"></span>
+      <div class="server-info">
+        <div class="server-name">${srv.name}</div>
+        <div class="server-latency">checking...</div>
+      </div>
+      <span class="server-tag ${srv.type}">${srv.type === 'ext' ? 'EXT' : 'LAN'}</span>
+    `;
+    list.appendChild(el);
+  });
+}
+
+async function checkServer(srv, idx) {
+  const el = document.getElementById('srv-' + idx);
+  if (!el) return;
+  const dot = el.querySelector('.server-dot');
+  const lat = el.querySelector('.server-latency');
+  dot.className = 'server-dot checking';
+  const t0 = Date.now();
+  try {
+    await fetch(srv.url, {
+      method: 'HEAD', mode: 'no-cors', cache: 'no-store',
+      signal: AbortSignal.timeout(srv.type === 'ext' ? 7000 : 3000)
+    });
+    dot.className = 'server-dot online';
+    lat.textContent = (Date.now() - t0) + ' ms';
+  } catch {
+    dot.className = 'server-dot offline';
+    lat.textContent = 'unreachable';
+  }
+}
+
+async function checkAllServers() {
+  for (let i = 0; i < CONFIG.servers.length; i++) {
+    if (i > 0) await sleep(400);
+    checkServer(CONFIG.servers[i], i);
+  }
+  const now = new Date();
+  document.getElementById('srv-updated').textContent =
+    'updated ' + now.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+}
+
+async function serversPollingLoop() {
+  await checkAllServers();
+  setInterval(checkAllServers, 5 * 60 * 1000);
+}
+
+// ── NETWORK / IP ─────────────────────────────────────────────────
+async function loadIpInfo() {
+  try {
+    const r = await fetch('https://ipwho.is/', {
+      signal: AbortSignal.timeout(8000)
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error();
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      el.textContent = val || '—';
+      el.classList.remove('skeleton');
+    };
+    set('ip-addr', d.ip);
+    set('ip-isp',  d.connection?.isp || '—');
+    set('ip-loc',  [d.city, d.region, d.country].filter(Boolean).join(', '));
+    set('ip-org',  d.connection?.org || '—');
+  } catch {
+    ['ip-addr','ip-isp','ip-loc','ip-org'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = 'error';
+      el.classList.remove('skeleton');
+    });
+  }
+}
+
+// ── FILE PROTOCOL WARNING ────────────────────────────────────────
+if (location.protocol === 'file:') {
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;bottom:12px;left:50%;transform:translateX(-50%);background:#3a2000;color:#ffb347;padding:8px 18px;border-radius:8px;font-size:0.75rem;font-family:Montserrat,sans-serif;z-index:999;border:1px solid #ffb34755;max-width:90vw;text-align:center;';
+  banner.textContent = 'file:// mode — API requests will fail (CORS). Serve via localhost for full functionality.';
+  document.body.appendChild(banner);
+  setTimeout(() => banner.style.opacity = '0', 10000);
+  setTimeout(() => banner.remove(), 11000);
+  banner.style.transition = 'opacity 1s';
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+buildSmartHome();
+buildServers();
+shPollingLoop();
+serversPollingLoop();
+loadIpInfo();
+</script>
+
 </body>
 </html>
