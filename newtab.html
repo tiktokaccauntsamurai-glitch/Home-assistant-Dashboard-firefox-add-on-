@@ -78,6 +78,7 @@
       flex-shrink: 0;
       line-height: 1;
       user-select: none;
+      transition: color .2s;
     }
     .search-bar input {
       flex: 1;
@@ -286,7 +287,7 @@
 <div class="top">
   <div class="firefox-title">FIREFOX</div>
   <div class="search-bar" id="search-bar">
-    <span class="search-g">G</span>
+    <span class="search-g" id="search-engine-icon">G</span>
     <input id="q" type="text" placeholder="Search with Google or enter address" autocomplete="off" autofocus/>
   </div>
 </div>

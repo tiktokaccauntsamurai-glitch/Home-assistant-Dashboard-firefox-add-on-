@@ -1,4 +1,4 @@
-var CONFIG = { ha: { url: '', token: '', devices: [] }, servers: [], pageOverrides: { newTab: true, homePage: true, startupPage: true } };
+var CONFIG = { ha: { url: '', token: '', devices: [] }, servers: [], pageOverrides: { newTab: true, homePage: true, startupPage: true }, searchEngine: { type: 'google', customUrl: '' } };
 
 function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
@@ -51,6 +51,31 @@ function hidePageContent() {
 }
 
 // ── Search ──────────────────────────────────────────────────────
+var ENGINE_CONFIGS = {
+  google: { label: 'G', color: '#4285F4', placeholder: 'Search with Google or enter address',  url: function(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); } },
+  ddg:    { label: 'D', color: '#de5833', placeholder: 'Search with DuckDuckGo or enter address', url: function(q) { return 'https://duckduckgo.com/?q=' + encodeURIComponent(q); } },
+  custom: { label: '?', color: '#9090a0', placeholder: 'Search or enter address', url: null }
+};
+
+function buildSearchUrl(q) {
+  var se = CONFIG.searchEngine || { type: 'google', customUrl: '' };
+  var type = se.type || 'google';
+  if (type === 'ddg') return ENGINE_CONFIGS.ddg.url(q);
+  if (type === 'custom' && se.customUrl) return se.customUrl.replace('{query}', encodeURIComponent(q));
+  return ENGINE_CONFIGS.google.url(q);
+}
+
+function updateSearchBar() {
+  var se = CONFIG.searchEngine || { type: 'google', customUrl: '' };
+  var type = se.type || 'google';
+  var cfg = ENGINE_CONFIGS[type] || ENGINE_CONFIGS.google;
+  var icon = document.getElementById('search-engine-icon');
+  var input = document.getElementById('q');
+  icon.textContent = cfg.label;
+  icon.style.color = cfg.color;
+  input.placeholder = cfg.placeholder;
+}
+
 document.getElementById('search-bar').addEventListener('click', function() {
   document.getElementById('q').focus();
 });
@@ -60,7 +85,7 @@ document.getElementById('q').addEventListener('keydown', function(e) {
     var isUrl = /^https?:\/\//i.test(q) || /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/|$)/.test(q);
     window.location.href = isUrl
       ? (q.startsWith('http') ? q : 'https://' + q)
-      : 'https://www.google.com/search?q=' + encodeURIComponent(q);
+      : buildSearchUrl(q);
   }
 });
 
@@ -266,8 +291,10 @@ browser.storage.local.get('config').then(function(data) {
       CONFIG = {
         ha: { url: cfg.ha.url || '', token: plainToken, devices: cfg.ha.devices || [] },
         servers: cfg.servers,
-        pageOverrides: cfg.pageOverrides
+        pageOverrides: cfg.pageOverrides,
+        searchEngine: cfg.searchEngine || { type: 'google', customUrl: '' }
       };
+      updateSearchBar();
       buildSmartHome();
       buildServers();
       shPollingLoop();

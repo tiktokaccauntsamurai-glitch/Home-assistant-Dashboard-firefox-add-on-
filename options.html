@@ -186,6 +186,34 @@
       box-shadow: 0 0 0 2px #00b3f4;
     }
 
+    /* ── Search engine selector ───────────────────────────── */
+    .engine-selector {
+      display: flex;
+      border: 1.5px solid #47464f;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .engine-option {
+      flex: 1;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #2b2a33;
+      color: #9090a0;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      transition: background .15s, color .15s;
+    }
+    .engine-option + .engine-option { border-left: 1px solid #47464f; }
+    .engine-option.active {
+      background: #1a2d45;
+      color: #00b3f4;
+    }
+    .custom-engine-field { margin-top: 14px; }
+
     /* ── Export button ────────────────────────────────────── */
     .btn-export {
       display: inline-flex;
@@ -256,6 +284,24 @@
         <input type="checkbox" id="toggle-startup" checked/>
         <span class="toggle-slider"></span>
       </label>
+    </div>
+  </div>
+
+  <!-- Search Engine -->
+  <div class="section">
+    <div class="section-title">Search Engine</div>
+    <div class="field">
+      <label>Default search engine</label>
+      <div class="engine-selector" id="engine-selector">
+        <button type="button" class="engine-option active" data-engine="google">Google</button>
+        <button type="button" class="engine-option" data-engine="ddg">DuckDuckGo</button>
+        <button type="button" class="engine-option" data-engine="custom">Custom</button>
+      </div>
+    </div>
+    <div class="field custom-engine-field" id="custom-engine-field" style="display:none">
+      <label>Search URL <span style="color:#55535f;font-weight:400;font-size:.65rem">(используй {query} как заглушку)</span></label>
+      <input type="text" id="custom-engine-url" placeholder="https://searxng.example.com/search?q={query}"/>
+      <div class="hint">Пример: https://searxng.local/search?q={query}&amp;language=ru</div>
     </div>
   </div>
 

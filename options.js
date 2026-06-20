@@ -96,6 +96,11 @@ function populateForm(config, plainToken) {
   document.getElementById('toggle-homepage').checked  = overrides.homePage !== false;
   document.getElementById('toggle-startup').checked   = overrides.startupPage !== false;
 
+  // Search engine
+  var se = config.searchEngine || { type: 'google', customUrl: '' };
+  setEngineUI(se.type || 'google');
+  document.getElementById('custom-engine-url').value = se.customUrl || '';
+
   var devList = document.getElementById('devices-list');
   devList.innerHTML = '';
   (config.ha.devices || []).forEach(function(d) { devList.appendChild(createDeviceItem(d)); });
@@ -123,6 +128,8 @@ function collectFormData() {
     var type      = activeBtn ? activeBtn.dataset.type : 'ext';
     if (url) servers.push({ name: name, url: url, type: type });
   });
+  var activeEngine = document.querySelector('.engine-option.active');
+  var engineType = activeEngine ? activeEngine.dataset.engine : 'google';
   return {
     haUrl:   document.getElementById('ha-url').value.trim(),
     haToken: document.getElementById('ha-token').value.trim(),
@@ -132,6 +139,10 @@ function collectFormData() {
       newTab:      document.getElementById('toggle-newtab').checked,
       homePage:    document.getElementById('toggle-homepage').checked,
       startupPage: document.getElementById('toggle-startup').checked
+    },
+    searchEngine: {
+      type: engineType,
+      customUrl: engineType === 'custom' ? document.getElementById('custom-engine-url').value.trim() : ''
     }
   };
 }
@@ -144,6 +155,13 @@ function exportSettings() {
 
   lines.push('=== Custom New Tab — Settings Export ===');
   lines.push('Exported: ' + ts);
+  lines.push('');
+
+  lines.push('--- Search Engine ---');
+  var engineNames = { google: 'Google', ddg: 'DuckDuckGo', custom: 'Custom' };
+  var seType = form.searchEngine ? form.searchEngine.type : 'google';
+  lines.push('Engine: ' + (engineNames[seType] || seType));
+  if (seType === 'custom') lines.push('URL: ' + (form.searchEngine.customUrl || '(not set)'));
   lines.push('');
 
   lines.push('--- Page Override ---');
@@ -188,11 +206,24 @@ function exportSettings() {
   showToast('Settings exported');
 }
 
+// ── Search engine UI ─────────────────────────────────────────────
+function setEngineUI(type) {
+  document.querySelectorAll('.engine-option').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.engine === type);
+  });
+  document.getElementById('custom-engine-field').style.display = type === 'custom' ? 'block' : 'none';
+}
+
+document.querySelectorAll('.engine-option').forEach(function(btn) {
+  btn.addEventListener('click', function() { setEngineUI(btn.dataset.engine); });
+});
+
 // ── Init — load + decrypt ───────────────────────────────────────
 var DEFAULTS = {
   ha: { url: '', token: '', devices: [] },
   servers: [],
-  pageOverrides: { newTab: true, homePage: true, startupPage: true }
+  pageOverrides: { newTab: true, homePage: true, startupPage: true },
+  searchEngine: { type: 'google', customUrl: '' }
 };
 
 browser.storage.local.get('config').then(function(data) {
@@ -200,6 +231,7 @@ browser.storage.local.get('config').then(function(data) {
   if (!config.ha)            config.ha            = DEFAULTS.ha;
   if (!config.servers)       config.servers        = [];
   if (!config.pageOverrides) config.pageOverrides = DEFAULTS.pageOverrides;
+  if (!config.searchEngine)  config.searchEngine  = DEFAULTS.searchEngine;
 
   var storedToken = config.ha.token;
   if (storedToken && typeof storedToken === 'object' && storedToken.ct) {
@@ -239,7 +271,8 @@ document.getElementById('btn-save').addEventListener('click', function() {
     var config = {
       ha: { url: form.haUrl, token: encryptedToken, devices: form.devices },
       servers: form.servers,
-      pageOverrides: form.pageOverrides
+      pageOverrides: form.pageOverrides,
+      searchEngine: form.searchEngine
     };
     return browser.storage.local.set({ config: config });
   }).then(function() {
