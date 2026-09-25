@@ -162,6 +162,65 @@
       letter-spacing: .04em;
     }
     .sh-btn.on .sh-state-label { color: #2ac48a; }
+    .sh-btn.unavail { opacity: .55; }
+
+    /* Read-only tiles: status indicator / sensor reading */
+    a.sh-tile { text-decoration: none; color: inherit; }
+    .sh-tile { cursor: default; padding-left: 6px; padding-right: 6px; }
+    .sh-tile[href] { cursor: pointer; }
+    .sh-state-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .7rem;
+      color: #9090a0;
+      letter-spacing: .03em;
+    }
+    .sh-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #55535f;
+      flex-shrink: 0;
+      transition: background .3s;
+    }
+    .sh-status.tone-active                 { border-color: #2ac48a; background: #1e3830; }
+    .sh-status.tone-active .sh-dot         { background: #2ac48a; box-shadow: 0 0 6px #2ac48a66; }
+    .sh-status.tone-active .sh-state-row   { color: #2ac48a; }
+    .sh-status.tone-alert                  { border-color: #ff4f5e; background: #3a2229; }
+    .sh-status.tone-alert .sh-dot          { background: #ff4f5e; box-shadow: 0 0 6px #ff4f5e66; animation: pulse 1.2s infinite; }
+    .sh-status.tone-alert .sh-state-row    { color: #ff4f5e; }
+    .sh-status.tone-unavail                { opacity: .55; border-style: dashed; }
+    .sh-values {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: baseline;
+      column-gap: 6px;
+      row-gap: 2px;
+      width: 100%;
+    }
+    .sh-value {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .74rem;
+      font-weight: 600;
+      color: #fbfbfe;
+      line-height: 1.2;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .sh-value2 { color: #cfcfd8; font-weight: 500; }
+    .sh-kind {
+      font-weight: 600;
+      color: #9090a0;
+    }
+    [data-kind="temperature"] .sh-kind { color: #ffb347; }
+    [data-kind="humidity"] .sh-kind,
+    [data-kind="moisture"] .sh-kind    { color: #00b3f4; }
+    [data-kind="power"] .sh-kind,
+    [data-kind="energy"] .sh-kind      { color: #e6c84c; }
 
     /* Servers */
     .server-list { display: flex; flex-direction: column; gap: 10px; }
@@ -321,6 +380,7 @@
 </button>
 
 <script src="crypto.js"></script>
+<script src="ha-format.js"></script>
 <script src="newtab.js"></script>
 </body>
 </html>

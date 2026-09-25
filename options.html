@@ -214,6 +214,53 @@
     }
     .custom-engine-field { margin-top: 14px; }
 
+    /* ── HA device mode selector ──────────────────────────── */
+    .mode-selector {
+      display: flex;
+      border: 1.5px solid #47464f;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .mode-option {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      font-size: .75rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #2b2a33;
+      color: #9090a0;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      transition: background .15s, color .15s;
+    }
+    .mode-option + .mode-option { border-left: 1px solid #47464f; }
+    .mode-option.active { background: #1a2d45; color: #00b3f4; }
+    .list-item .field-row.sensor-opts { margin-bottom: 4px; }
+    .list-item .hint.sensor-opts { margin: 0 0 10px; }
+    select {
+      width: 100%; background: #2b2a33;
+      border: 1.5px solid #47464f; border-radius: 8px;
+      padding: 9px 10px; color: #fbfbfe;
+      font-family: 'Montserrat', sans-serif; font-size: .85rem;
+      outline: none;
+    }
+    select:focus { border-color: #00b3f4; }
+    .check-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; min-width: 0; }
+    .btn-check {
+      background: #2b2a33; border: 1.5px solid #47464f;
+      border-radius: 8px; padding: 6px 14px;
+      color: #9090a0; font-family: 'Montserrat', sans-serif;
+      font-size: .72rem; font-weight: 600; cursor: pointer;
+      transition: border-color .15s, color .15s; flex-shrink: 0;
+    }
+    .btn-check:hover { border-color: #00b3f4; color: #00b3f4; }
+    .btn-check:disabled { opacity: .5; cursor: default; }
+    .check-result { font-size: .7rem; color: #9090a0; min-width: 0; overflow-wrap: anywhere; }
+    .check-result.ok  { color: #2ac48a; }
+    .check-result.err { color: #ff4f5e; }
+
     /* ── Export button ────────────────────────────────────── */
     .btn-export {
       display: inline-flex;
@@ -299,9 +346,9 @@
       </div>
     </div>
     <div class="field custom-engine-field" id="custom-engine-field" style="display:none">
-      <label>Search URL <span style="color:#55535f;font-weight:400;font-size:.65rem">(используй {query} как заглушку)</span></label>
+      <label>Search URL <span style="color:#55535f;font-weight:400;font-size:.65rem">(use {query} as the placeholder)</span></label>
       <input type="text" id="custom-engine-url" placeholder="https://searxng.example.com/search?q={query}"/>
-      <div class="hint">Пример: https://searxng.local/search?q={query}&amp;language=ru</div>
+      <div class="hint">Example: https://searxng.local/search?q={query}&amp;language=en</div>
     </div>
   </div>
 
@@ -327,6 +374,7 @@
     </div>
     <div class="field">
       <label>Devices</label>
+      <div class="hint" style="margin:0 0 10px">Button — toggles on/off. Status — read-only indicator (door, motion, lock, person…). Sensor — value with unit, e.g. temperature + humidity.</div>
       <div id="devices-list"></div>
       <button class="btn-add" id="btn-add-device" type="button">+ add device</button>
     </div>
@@ -354,6 +402,7 @@
 <div class="toast" id="toast">Settings saved</div>
 
 <script src="crypto.js"></script>
+<script src="ha-format.js"></script>
 <script src="options.js"></script>
 </body>
 </html>

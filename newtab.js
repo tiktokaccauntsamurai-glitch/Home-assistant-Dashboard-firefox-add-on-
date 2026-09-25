@@ -90,7 +90,12 @@ document.getElementById('q').addEventListener('keydown', function(e) {
 });
 
 // ── Home Assistant ──────────────────────────────────────────────
-var shState = {};
+// Device tile modes (see HaFormat.resolveMode):
+//   toggle — button that calls turn_on / turn_off
+//   status — read-only state indicator (dot + label)
+//   sensor — reading with unit, optional secondary entity (e.g. humidity)
+var shState = {};   // entity_id → full state object
+var shTiles = [];   // { dev, mode, el }
 
 function haHeaders() {
   return { 'Authorization': 'Bearer ' + CONFIG.ha.token, 'Content-Type': 'application/json' };
@@ -99,8 +104,9 @@ function haHeaders() {
 async function haFetchState(entityId) {
   try {
     var r = await bgFetch(CONFIG.ha.url + '/api/states/' + entityId, { headers: haHeaders(), timeout: 5000 });
-    if (!r || !r.ok) return null;
-    return r.json ? r.json.state : null;
+    if (r && r.status === 404) return { entity_id: entityId, state: 'not_found', attributes: {} };
+    if (!r || !r.ok || !r.json) return null;
+    return r.json;
   } catch (e) { return null; }
 }
 
@@ -115,58 +121,166 @@ async function haToggle(entityId, currentState) {
   } catch {}
 }
 
-function renderShBtn(dev, idx) {
-  var state = shState[dev.id];
-  var btn = document.getElementById('sh-btn-' + idx);
-  if (!btn) return;
-  btn.className = 'sh-btn ' + (state === 'on' ? 'on' : state === 'off' ? 'off' : '');
-  btn.querySelector('.sh-state-label').textContent = state === 'on' ? 'on' : state === 'off' ? 'off' : '';
+function shTooltip(dev) {
+  var st = shState[dev.id];
+  var lines = [dev.id + (dev.secondary ? ' + ' + dev.secondary : '')];
+  if (st && st.attributes && st.attributes.friendly_name) lines.unshift(st.attributes.friendly_name);
+  var ago = HaFormat.formatAgo(HaFormat.lastSeen(st));
+  if (ago) lines.push('updated ' + ago);
+  return lines.join('\n');
+}
+
+function renderToggle(t) {
+  var st = shState[t.dev.id];
+  var s = st ? st.state : null;
+  t.el.className = 'sh-btn ' + (s === 'on' ? 'on' : s === 'off' ? 'off' : (st && HaFormat.isUnavailable(st)) ? 'unavail' : '');
+  t.el.querySelector('.sh-state-label').textContent =
+    s === 'on' ? 'on' : s === 'off' ? 'off' : st ? HaFormat.describeStatus(st).label.toLowerCase() : '';
+}
+
+function renderStatus(t) {
+  var d = HaFormat.describeStatus(shState[t.dev.id], t.dev.decimals);
+  t.el.className = 'sh-btn sh-tile sh-status' + (d.tone ? ' tone-' + d.tone : '');
+  t.el.querySelector('.sh-state-text').textContent = d.label;
+}
+
+function renderReading(el, reading) {
+  var r = HaFormat.taggedReading(reading);
+  el.dataset.kind = (reading && reading.kind) || '';
+  el.textContent = '';
+  if (r.tag) {
+    var tag = document.createElement('span'); tag.className = 'sh-kind'; tag.textContent = r.tag;
+    el.appendChild(tag);
+  }
+  var v = document.createElement('span');
+  v.textContent = r.text;
+  el.appendChild(v);
+}
+
+function renderSensor(t) {
+  var st = shState[t.dev.id];
+  var main = HaFormat.primaryReading(st, t.dev.decimals);
+  var second = null;
+  if (t.dev.secondary) {
+    var st2 = shState[t.dev.secondary];
+    second = HaFormat.primaryReading(st2, t.dev.decimals) || (st2 ? { text: '—', value: '—', unit: '', kind: null } : null);
+  } else {
+    second = HaFormat.builtinHumidity(st, t.dev.decimals);
+  }
+  t.el.className = 'sh-btn sh-tile sh-sensor' + (st && !main ? ' unavail' : '');
+  var mainEl = t.el.querySelector('.sh-value');
+  var secEl  = t.el.querySelector('.sh-value2');
+  if (!st) { mainEl.textContent = ''; } else { renderReading(mainEl, main); }
+  if (second) { renderReading(secEl, second); secEl.style.display = ''; }
+  else        { secEl.textContent = ''; secEl.style.display = 'none'; }
+}
+
+function renderTile(t) {
+  if (t.mode === 'status')      renderStatus(t);
+  else if (t.mode === 'sensor') renderSensor(t);
+  else                          renderToggle(t);
+  if (t.mode !== 'toggle') t.el.title = shTooltip(t.dev);
+}
+
+function shUpdate(entityId, st) {
+  shState[entityId] = st;
+  shTiles.forEach(function(t) {
+    if (t.dev.id === entityId || t.dev.secondary === entityId) renderTile(t);
+  });
+}
+
+function createToggleTile(dev) {
+  var btn = document.createElement('button');
+  btn.className = 'sh-btn';
+  var n = document.createElement('span'); n.className = 'sh-name'; n.textContent = dev.name || dev.id;
+  var s = document.createElement('span'); s.className = 'sh-state-label';
+  btn.appendChild(n); btn.appendChild(s);
+  btn.addEventListener('click', async function() {
+    var cur = shState[dev.id];
+    if (!cur || HaFormat.isUnavailable(cur)) return;
+    shUpdate(dev.id, Object.assign({}, cur, { state: cur.state === 'on' ? 'off' : 'on' }));
+    btn.classList.add('loading'); await haToggle(dev.id, cur.state); btn.classList.remove('loading');
+    var delays = [3000, 8000, 18000, 40000];
+    for (var i = 0; i < delays.length; i++) {
+      await sleep(delays[i]);
+      var st = await haFetchState(dev.id);
+      if (st !== null) shUpdate(dev.id, st);
+    }
+  });
+  return btn;
+}
+
+// Read-only tiles open the entity history in HA, like the default "more-info" tap in Lovelace
+function createReadonlyTile(dev, mode) {
+  var el = document.createElement('a');
+  el.className = 'sh-btn sh-tile';
+  if (CONFIG.ha.url) {
+    var ids = [dev.id].concat(dev.secondary ? [dev.secondary] : []);
+    el.href = CONFIG.ha.url + '/history?entity_id=' + encodeURIComponent(ids.join(','));
+  }
+  var n = document.createElement('span'); n.className = 'sh-name'; n.textContent = dev.name || dev.id;
+  el.appendChild(n);
+  if (mode === 'status') {
+    var row = document.createElement('span'); row.className = 'sh-state-row';
+    var dot = document.createElement('span'); dot.className = 'sh-dot';
+    var txt = document.createElement('span'); txt.className = 'sh-state-text';
+    row.appendChild(dot); row.appendChild(txt);
+    el.appendChild(row);
+  } else {
+    // both readings share one line so the tile keeps the 2-line height of a button
+    var vals = document.createElement('span'); vals.className = 'sh-values';
+    var v1 = document.createElement('span'); v1.className = 'sh-value';
+    var v2 = document.createElement('span'); v2.className = 'sh-value sh-value2'; v2.style.display = 'none';
+    vals.appendChild(v1); vals.appendChild(v2);
+    el.appendChild(vals);
+  }
+  return el;
 }
 
 function buildSmartHome() {
   var grid = document.getElementById('sh-grid');
   grid.innerHTML = '';
+  shTiles = [];
   if (!CONFIG.ha.devices || !CONFIG.ha.devices.length) {
     grid.innerHTML = '<div class="empty-msg" style="grid-column:1/-1">No devices — <a href="#" id="link-settings-ha">open settings</a></div>';
     var link = document.getElementById('link-settings-ha');
     if (link) link.addEventListener('click', function(e) { e.preventDefault(); browser.runtime.openOptionsPage(); });
     return;
   }
-  CONFIG.ha.devices.forEach(function(dev, idx) {
-    shState[dev.id] = null;
-    var btn = document.createElement('button');
-    btn.className = 'sh-btn'; btn.id = 'sh-btn-' + idx;
-    var n = document.createElement('span'); n.className = 'sh-name'; n.textContent = dev.name || dev.id;
-    var s = document.createElement('span'); s.className = 'sh-state-label';
-    btn.appendChild(n); btn.appendChild(s);
-    btn.addEventListener('click', async function() {
-      var cur = shState[dev.id]; if (cur === null) return;
-      shState[dev.id] = cur === 'on' ? 'off' : 'on'; renderShBtn(dev, idx);
-      btn.classList.add('loading'); await haToggle(dev.id, cur); btn.classList.remove('loading');
-      var delays = [3000, 8000, 18000, 40000];
-      for (var i = 0; i < delays.length; i++) {
-        await sleep(delays[i]);
-        var st = await haFetchState(dev.id);
-        if (st !== null) { shState[dev.id] = st; renderShBtn(dev, idx); }
-      }
-    });
-    grid.appendChild(btn);
+  CONFIG.ha.devices.forEach(function(dev) {
+    var mode = HaFormat.resolveMode(dev);
+    var el = mode === 'toggle' ? createToggleTile(dev) : createReadonlyTile(dev, mode);
+    var t = { dev: dev, mode: mode, el: el };
+    shTiles.push(t);
+    renderTile(t);
+    grid.appendChild(el);
   });
 }
 
+// Every tracked entity (primary + secondary), each fetched once per cycle
+function shEntityIds() {
+  var ids = [];
+  (CONFIG.ha.devices || []).forEach(function(dev) {
+    [dev.id, dev.secondary].forEach(function(id) {
+      if (id && ids.indexOf(id) === -1) ids.push(id);
+    });
+  });
+  return ids;
+}
+
 async function shPollingLoop() {
-  if (!CONFIG.ha.url || !CONFIG.ha.token || !CONFIG.ha.devices.length) return;
-  var count = CONFIG.ha.devices.length;
-  var step = Math.floor(60000 / count);
-  CONFIG.ha.devices.forEach(function(dev, i) {
-    haFetchState(dev.id).then(function(st) { if (st !== null) { shState[dev.id] = st; renderShBtn(dev, i); } });
+  var ids = shEntityIds();
+  if (!CONFIG.ha.url || !CONFIG.ha.token || !ids.length) return;
+  var step = Math.floor(60000 / ids.length);
+  ids.forEach(function(id) {
+    haFetchState(id).then(function(st) { if (st !== null) shUpdate(id, st); });
   });
   await sleep(60000);
   while (true) {
-    for (var i = 0; i < count; i++) {
+    for (var i = 0; i < ids.length; i++) {
       if (i > 0) await sleep(step);
-      var st = await haFetchState(CONFIG.ha.devices[i].id);
-      if (st !== null) { shState[CONFIG.ha.devices[i].id] = st; renderShBtn(CONFIG.ha.devices[i], i); }
+      var st = await haFetchState(ids[i]);
+      if (st !== null) shUpdate(ids[i], st);
     }
     await sleep(step);
   }

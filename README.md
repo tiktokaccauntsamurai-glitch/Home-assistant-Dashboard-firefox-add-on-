@@ -1,248 +1,116 @@
-<div align="center">
+# Custom New Tab — Dashboard
 
-```
-███████╗██╗██████╗ ███████╗███████╗ ██████╗ ██╗  ██╗    ████████╗ █████╗ ██████╗ 
-██╔════╝██║██╔══██╗██╔════╝██╔════╝██╔═══██╗╚██╗██╔╝    ╚══██╔══╝██╔══██╗██╔══██╗
-█████╗  ██║██████╔╝█████╗  █████╗  ██║   ██║ ╚███╔╝        ██║   ███████║██████╔╝
-██╔══╝  ██║██╔══██╗██╔══╝  ██╔══╝  ██║   ██║ ██╔██╗        ██║   ██╔══██║██╔══██╗
-██║     ██║██║  ██║███████╗██║     ╚██████╔╝██╔╝ ██╗       ██║   ██║  ██║██████╔╝
-╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝       ╚═╝   ╚═╝  ╚═╝╚═════╝ 
-```
+A Firefox new tab page with Home Assistant controls and sensor readings, server status
+monitoring and network information.
 
-**A custom Firefox new tab & homepage — your browser, your dashboard.**
+![Dashboard](docs/screenshot.png)
 
-[![Firefox](https://img.shields.io/badge/Firefox-140%2B-FF7139?style=flat-square&logo=firefox-browser&logoColor=white)](https://www.mozilla.org/firefox/)
-[![Manifest](https://img.shields.io/badge/Manifest-v2-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json)
-[![License](https://img.shields.io/badge/License-MIT-2ac48a?style=flat-square)](./LICENSE)
-[![AMO](https://img.shields.io/badge/AMO-home--assist--universal--tab-FF7139?style=flat-square&logo=firefox&logoColor=white)](https://addons.mozilla.org/)
-[![No data collected](https://img.shields.io/badge/Data%20collected-none-2ac48a?style=flat-square)](#privacy)
+## Features
 
-</div>
+- **Search bar** with Google, DuckDuckGo or any custom search URL.
+- **Home Assistant**, with each device shown in one of three ways:
+  - **Button**: toggles lights, switches, fans and similar devices on and off.
+  - **Status**: a read-only indicator for doors, motion, locks, people and similar entities.
+    It uses the same wording as Home Assistant ("Open", "Detected", "Wet"). Alarms such as
+    leak, smoke or gas turn the tile red.
+  - **Sensor**: shows a value with its unit, with an optional second value, for example
+    temperature and humidity.
+- **Servers**: checks your sites and local services every 5 minutes and shows the latency.
+- **Network**: shows your external IP, ISP and location.
+- **Page override switches**: pick where the dashboard appears (new tab, home page, startup).
+- **Encrypted token**: the Home Assistant token is stored encrypted (AES-256-GCM).
 
----
+## Installation
 
-## ✦ What is this?
+Install from [Firefox Add-ons](https://addons.mozilla.org/), or load the source for development:
 
-**Firefox Tab** replaces your new tab page and homepage with a personal dashboard. No tracking, no ads, no cloud — everything runs locally in your browser.
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on…** and select `manifest.json`.
 
-Every time you open a new tab you get:
+Requires Firefox 140 or newer (Firefox for Android 142 or newer).
 
-- 🔆 **Home Assistant controls** — toggle your smart home devices in one click
-- 🖥 **Server monitor** — real-time ping & latency for all your servers
-- 🌐 **Network info** — your external IP, ISP, location, and organisation
-- 🔍 **Search bar** — Google search or direct URL navigation
+## Home Assistant setup
 
----
+1. In Home Assistant, open your profile, then **Security → Long-lived access tokens**, and
+   create a token.
+2. Open the extension settings (the gear icon in the bottom right of the new tab page).
+3. Enter your Home Assistant URL (for example `http://homeassistant.local:8123`) and the token.
+4. Add devices by entity ID. Click **Check** to confirm that the entity exists. The display
+   name is filled in from Home Assistant automatically.
 
-## ✦ Preview
+### Display modes
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                                                                 │
-│              F I R E F O X  (animated gradient)                 │
-│                                                                 │
-│   ╔═══════════════════════════════════════════════════════╗     │
-│   ║  G  │  Search with Google or enter address...         ║     │
-│   ╚═══════════════════════════════════════════════════════╝     │
-│                                                                 │
-│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐    │
-│  │  Home Assistant │ │    Servers      │ │    Network      │    │
-│  │                 │ │                 │ │                 │    │
-│  │ [Up Light ] ON  │ │ ● Server 1  ext │ │ IP   1.2.3.4    │    │
-│  │ [Table    ] OFF │ │ ● NAS      lan  │ │ ISP  Comcast    │    │
-│  │ [Sub PC   ] ON  │ │ ◉ Server 2 ext │ │ Loc  NY, US     │    │
-│  │ [Printer  ] OFF │ │ ● Home srv lan  │ │ Org  AS12345    │    │
-│  └─────────────────┘ └─────────────────┘ └─────────────────┘    │
-│                                                            ⚙️   │
-└─────────────────────────────────────────────────────────────────┘
-```
+| Mode | Used for | Shows |
+|---|---|---|
+| **Auto** (default) | Picks a mode from the entity domain | See below |
+| **Button** | `switch`, `light`, `fan`, `input_boolean` and anything else | Name, `on`/`off`, toggles on click |
+| **Status** | `binary_sensor`, `lock`, `cover`, `person`, `device_tracker`, `alarm_control_panel` and more | Coloured dot and state |
+| **Sensor** | `sensor`, `climate`, `weather`, `number`, `counter` | Value with unit |
 
----
+With **Auto**, sensor-like domains become Sensor tiles, read-only domains become Status
+tiles and everything else becomes a Button.
 
-## ✦ Features
+**Sensor options:**
+- **Second value**: another entity shown on the same tile, for example a humidity sensor next
+  to a temperature sensor.
+- **Built-in humidity**: `climate` and `weather` entities show their own humidity automatically.
+- **Decimals**: Auto shows up to 1 decimal place, and whole numbers for percentages.
 
-### 🏠 Home Assistant Widget
-- Toggle any `switch.*`, `light.*`, or other HA entities
-- Optimistic UI — the button responds instantly, then syncs with real state
-- Automatic polling every 60 seconds
-- Token stored encrypted with **AES-256-GCM** — never in plaintext
+Clicking a Status or Sensor tile opens that entity's history in Home Assistant.
 
-### 🖥 Server Monitor
-- HEAD-request ping for each server every 5 minutes
-- Shows latency in ms or `unreachable`
-- Visual tags: **EXT** (external) / **LAN** (local network)
-- Background script proxy — no CORS issues
+### Value letters
 
-### 🌐 Network Info
-- External IP via [ipwho.is](https://ipwho.is) with [ip-api.com](http://ip-api.com) fallback
-- ISP, location, and organisation
-- Skeleton loading animation while fetching
+Sensor values start with a short letter that names what is being measured:
 
-### ⚙️ Settings Page
-- Full GUI — no config file editing needed
-- Add / remove devices and servers dynamically
-- HA token shown/hidden toggle, stored encrypted
-- Opens via gear button (bottom-right corner)
+| Letter | Measurement | Example |
+|---|---|---|
+| T | temperature | `T 22.5°C` |
+| H | humidity, moisture | `H 45%` |
+| W | power | `W 412.7` |
+| E | energy | `E 1,532.4 kWh` |
+| P | pressure | `P 1,012 hPa` |
+| B | battery | `B 87%` |
+| V | voltage | `V 230.1` |
+| A | current | `A 350 mA` |
+| L | illuminance | `L 320 lx` |
+| CO2 | carbon dioxide | `CO2 640 ppm` |
+| PM | PM2.5, PM10 | `PM 12 µg/m³` |
+| WS / S | wind speed / speed | `WS 4.3 m/s` |
 
----
+If the unit is the same as the letter, it is written once: `W 412.7`, not `W 412.7 W`. When
+the unit adds information, it stays: `W 1.2 kW`, `A 350 mA`, `T 72.3°F`.
 
-## ✦ Installation
+## Testing without Home Assistant
 
-### From source (recommended for personal use)
+[Home Assistant test mock](https://github.com/tiktokaccauntsamurai-glitch/Home-Assistant-test-mock) is a fake Home Assistant server
+(Python, no dependencies) with live-changing sensors and a control panel:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/firefox-tab.git
-cd firefox-tab
+python mock_ha.py
 ```
 
-1. Open Firefox and navigate to `about:debugging`
-2. Click **"This Firefox"** → **"Load Temporary Add-on"**
-3. Select `manifest.json` from the cloned folder
+In the extension settings, use the URL `http://127.0.0.1:8123` and the token `test-token`.
 
-> The extension will reload on browser restart — for permanent install, see below.
+## Privacy
 
-### Permanent install (self-signed)
+- Settings are stored locally in the browser (`storage.local`). The Home Assistant token is
+  encrypted with a key that is generated on your device.
+- The extension contacts only:
+  - your Home Assistant instance and the servers you add;
+  - [ipwho.is](https://ipwho.is/), with [ip-api.com](https://ip-api.com/) as a fallback, to
+    show your external IP address;
+  - Google Fonts, to load the fonts.
+- There is no analytics, tracking or data collection.
 
-1. Go to `about:config` in Firefox
-2. Set `xpinstall.signatures.required` → `false`
-3. Zip the extension folder and rename to `.xpi`
-4. Drag & drop the `.xpi` into Firefox
-
----
-
-## ✦ Configuration
-
-Click the **⚙ gear icon** in the bottom-right corner of any new tab to open Settings.
-
-### Home Assistant
-
-| Field | Example |
-|-------|---------|
-| URL | `http://homeassistant.local:8123` |
-| Token | Long-lived access token from HA profile |
-| Entity ID | `switch.living_room`, `light.bedroom` |
-| Display name | Any label you want |
-
-> **Token security:** The token is encrypted with AES-256-GCM before being saved to `browser.storage.local`. The encryption key is auto-generated per browser profile and never leaves your device.
-
-### Servers
-
-| Field | Value |
-|-------|-------|
-| Name | Display label |
-| URL | Full URL including port |
-| Type | `EXT` — internet / `LAN` — local network |
-
----
-
-## ✦ File Structure
-
-```
-firefox-tab/
-├── manifest.json          # Extension manifest (MV2)
-├── newtab.html            # New tab / homepage UI
-├── newtab.js              # Dashboard logic & polling
-├── crypto.js              # AES-256-GCM token encryption
-├── background.js          # Fetch proxy + homepage redirect
-├── options.html           # Settings page UI
-├── options.js             # Settings page logic
-└── icons/
-    ├── icon-48.svg
-    └── icon-96.svg
-```
-
----
-
-## ✦ How it works
-
-```
-New tab opened
-      │
-      ▼
-background.js intercepts about:home / about:newtab
-      │
-      ▼
-newtab.html loads → reads config from browser.storage.local
-      │
-      ├── Decrypts HA token via crypto.js
-      ├── Builds Smart Home grid (DOM)
-      ├── Builds Server list (DOM)
-      │
-      ▼
-All network requests → background.js (fetch proxy)
-      │                  avoids CORS / CSP restrictions
-      ▼
-Results rendered in UI with polling loops
-```
-
----
-
-## ✦ Privacy
-
-| What | Collected? |
-|------|-----------|
-| Browsing history | ❌ No |
-| Personal data | ❌ No |
-| Analytics / telemetry | ❌ No |
-| Data sent to any server | ❌ No |
-| HA token | Stored **encrypted locally** only |
-
-The extension makes outbound requests only to:
-- Your own Home Assistant instance
-- Your own configured servers
-- `ipwho.is` / `ip-api.com` — to display your own IP info
-
-Declared in manifest: **`"required": ["none"]`** — Firefox confirms to users that no data is collected.
-
----
-
-## ✦ Requirements
-
-- Firefox **140+** (desktop) / **142+** (Android)
-- Python 3 (only if using the included local dev server)
-- A running Home Assistant instance *(optional)*
-
----
-
-## ✦ Local dev server
-
-A simple Python HTTP server is included for testing the HTML outside the extension context:
+## Building
 
 ```bash
-# Windows
-start_server.bat
-
-# macOS / Linux
-python3 -m http.server 8080
+python build.py
 ```
 
-Then open `http://localhost:8080/newtab.html` in your browser.
+This creates `release/custom-new-tab-dashboard-<version>.zip` for addons.mozilla.org. The
+version comes from `manifest.json`.
 
-> Note: `browser.*` APIs won't be available outside the extension context — use `about:debugging` for full testing.
+## License
 
----
-
-## ✦ Contributing
-
-Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to change.
-
-```bash
-# Lint with web-ext before submitting
-npx web-ext lint
-```
-
-Please keep the zero-dependency philosophy — no npm packages, no bundlers, vanilla JS only.
-
----
-
-## ✦ License
-
-[MIT](./LICENSE) — do whatever you want, just don't claim you made it from scratch 🙂
-
----
-
-<div align="center">
-
-
-
-</div>
+[MIT](LICENSE)

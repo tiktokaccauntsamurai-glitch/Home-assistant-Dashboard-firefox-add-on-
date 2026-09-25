@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Custom New Tab — Dashboard",
-  "version": "2.3",
-  "description": "Custom new tab page with Home Assistant controls, server monitoring, and network info widget.",
+  "version": "2.4",
+  "description": "Custom new tab page with Home Assistant buttons, status indicators and sensor readings, server monitoring, and network info widget.",
   "browser_specific_settings": {
     "gecko": {
       "id": "home-assist-universal-tab@extension",
