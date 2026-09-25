@@ -43,6 +43,7 @@
       transition: border-color .15s; outline: none;
     }
     input:focus { border-color: #00b3f4; }
+    input[type="range"] { width: 100%; accent-color: #00b3f4; }
     input::placeholder { color: #55535f; }
     .field { margin-bottom: 14px; }
     .field:last-child { margin-bottom: 0; }
@@ -331,6 +332,16 @@
         <input type="checkbox" id="toggle-startup" checked/>
         <span class="toggle-slider"></span>
       </label>
+    </div>
+  </div>
+
+  <!-- Appearance -->
+  <div class="section">
+    <div class="section-title">Appearance</div>
+    <div class="field">
+      <label>FIREFOX logo size: <span id="logo-scale-value">100%</span></label>
+      <input type="range" id="logo-scale" min="50" max="200" step="5" value="100"/>
+      <div class="hint">Base size only — the logo still shrinks and grows with the window as before.</div>
     </div>
   </div>
 

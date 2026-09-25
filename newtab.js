@@ -385,6 +385,7 @@ browser.storage.local.get('config').then(function(data) {
   if (!cfg.ha) cfg.ha = { url: '', token: '', devices: [] };
   if (!cfg.servers) cfg.servers = [];
   if (!cfg.pageOverrides) cfg.pageOverrides = { newTab: true, homePage: true, startupPage: true };
+  if (cfg.logoScale) document.documentElement.style.setProperty('--logo-scale', cfg.logoScale / 100);
 
   // Check if dashboard should be shown for this context
   checkPageOverride(cfg).then(function(shouldShow) {

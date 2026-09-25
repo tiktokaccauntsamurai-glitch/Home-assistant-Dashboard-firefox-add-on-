@@ -102,15 +102,6 @@ In the extension settings, use the URL `http://127.0.0.1:8123` and the token `te
   - Google Fonts, to load the fonts.
 - There is no analytics, tracking or data collection.
 
-## Building
-
-```bash
-python build.py
-```
-
-This creates `release/custom-new-tab-dashboard-<version>.zip` for addons.mozilla.org. The
-version comes from `manifest.json`.
-
 ## License
 
 [MIT](LICENSE)

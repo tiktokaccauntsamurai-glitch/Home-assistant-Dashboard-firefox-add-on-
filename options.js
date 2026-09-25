@@ -225,6 +225,8 @@ function populateForm(config, plainToken) {
   document.getElementById('toggle-homepage').checked  = overrides.homePage !== false;
   document.getElementById('toggle-startup').checked   = overrides.startupPage !== false;
 
+  setLogoScaleUI(config.logoScale || 100);
+
   // Search engine
   var se = config.searchEngine || { type: 'google', customUrl: '' };
   setEngineUI(se.type || 'google');
@@ -278,6 +280,7 @@ function collectFormData() {
       homePage:    document.getElementById('toggle-homepage').checked,
       startupPage: document.getElementById('toggle-startup').checked
     },
+    logoScale: +document.getElementById('logo-scale').value,
     searchEngine: {
       type: engineType,
       customUrl: engineType === 'custom' ? document.getElementById('custom-engine-url').value.trim() : ''
@@ -346,6 +349,15 @@ function exportSettings() {
   showToast('Settings exported');
 }
 
+// ── Logo size UI ─────────────────────────────────────────────────
+function setLogoScaleUI(v) {
+  document.getElementById('logo-scale').value = v;
+  document.getElementById('logo-scale-value').textContent = v + '%';
+}
+document.getElementById('logo-scale').addEventListener('input', function() {
+  setLogoScaleUI(this.value);
+});
+
 // ── Search engine UI ─────────────────────────────────────────────
 function setEngineUI(type) {
   document.querySelectorAll('.engine-option').forEach(function(btn) {
@@ -400,8 +412,31 @@ document.getElementById('token-toggle').addEventListener('click', function() {
 document.getElementById('btn-export').addEventListener('click', exportSettings);
 
 // ── Save — encrypt token then store ─────────────────────────────
+// Host access is not granted at install time — only the specific sites
+// the user configured (HA, servers, IP-info services) are requested on save.
+function originPattern(u) {
+  try {
+    var p = new URL(u);
+    if (p.protocol !== 'http:' && p.protocol !== 'https:') return null;
+    return p.protocol + '//' + p.hostname + '/*';
+  } catch (e) { return null; }
+}
+
+function requestHostAccess(form) {
+  var urls = [form.haUrl, 'https://ipwho.is/', 'http://ip-api.com/'];
+  form.servers.forEach(function(s) { urls.push(s.url); });
+  var origins = [];
+  urls.forEach(function(u) {
+    var o = originPattern(u);
+    if (o && origins.indexOf(o) === -1) origins.push(o);
+  });
+  return browser.permissions.request({ origins: origins }).catch(function() { return false; });
+}
+
 document.getElementById('btn-save').addEventListener('click', function() {
   var form = collectFormData();
+  // must be called synchronously inside the click handler (user gesture)
+  var accessPromise = requestHostAccess(form);
 
   var tokenPromise = form.haToken
     ? CryptoHelper.encrypt(form.haToken)
@@ -412,12 +447,16 @@ document.getElementById('btn-save').addEventListener('click', function() {
       ha: { url: form.haUrl, token: encryptedToken, devices: form.devices },
       servers: form.servers,
       pageOverrides: form.pageOverrides,
+      logoScale: form.logoScale,
       searchEngine: form.searchEngine
     };
     return browser.storage.local.set({ config: config });
   }).then(function() {
+    return accessPromise;
+  }).then(function(granted) {
     document.getElementById('enc-badge').style.display = form.haToken ? 'inline-flex' : 'none';
-    showToast('Settings saved — token encrypted');
+    showToast(granted ? 'Settings saved — token encrypted'
+                      : 'Saved, but site access was denied — widgets cannot reach your servers');
   }).catch(function(e) {
     showToast('Error: ' + e.message);
   });

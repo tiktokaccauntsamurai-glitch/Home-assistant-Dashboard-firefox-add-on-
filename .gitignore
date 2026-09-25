@@ -18,8 +18,7 @@ Thumbs.db
 .idea/
 
 
-# Release packages and old copies
-release/
+# Old copies and archives
 *.zip
 firefox dashboard plugin v*/
 __pycache__/
